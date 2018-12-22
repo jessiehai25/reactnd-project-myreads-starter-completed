@@ -8,52 +8,61 @@ class searchResult extends Component{
 	state = {
 		query : '',
 		books : [],
-		showingBooks:[],
-		currentBooks: this.props.currentBooks
 	}
 	updateQuery = (query, currentBooks) => {
 		const currentBookss = currentBooks
 		
 		query === ""
 		? this.setState(()=>({books: [], query : ""}))
-		: BooksAPI.search(query)
-	    .then((books) => {
-	    	if (!books.error) {
+		: this.setState(()=>({
+	    		query: query,
+	    	}), ()=>{
+				BooksAPI.search(query)
+		    	.then((books) => {
+		    		if (!books.error) {
+	    		
 		    	//BooksAPI.update(books,"none")
 		    	//.then(()=>{
 		    	//	currentBookss.map((book)=>(BooksAPI.update(book,book.shelf)))
-		    		BooksAPI.search(query)
-		    		.then((books) => {
-		    			const booksfinal = this.matchBookUpdateShelf(currentBookss, books)
-		    			console.log(booksfinal)    			
-				      this.setState(()=>({
-				        books: books,
-				        query: query,
-				      }))
-				    })
-				     
+			    			this.setState(()=>({
+			    				books:this.matchBookUpdateShelf(currentBookss, books)
+			    				}))   			
+					      
 				//})
-			}else{
-				this.setState(()=>({
-				books: [],
-				query: query,
-				}))
-			}
-		})
+					}else{
+						this.setState(()=>({
+						books: [],
+						}))
+					}
+				})
+		    }
+		)
 	}
 
 	matchBookUpdateShelf = (bookShelfList, searchBooksList)=>{
-		const booklistFinal = searchBooksList
-		for (var i = 0; i < bookShelfList.length; i++) {
-			for (var j = 0; j < searchBooksList.length; j++) {
-				if(searchBooksList[j].id=== bookShelfList[i].id){
-					booklistFinal[j] = bookShelfList[i]
-				}
-			}
-			
+		const searchBooksListFinal = searchBooksList
+		console.log(searchBooksList)
+		console.log(bookShelfList)
+				searchBooksListFinal.map((searchbook)=>{
+					searchbook.shelf="none"	
+					bookShelfList.map((bookonshelf)=>{ 
+					if (searchbook.id === bookonshelf.id){
+						searchbook.shelf = bookonshelf.shelf
+					}
+
+				})
+			})
+
+			/*for (var i = 0; i < bookShelfList.length; i++) {
+				for (var j = 0; j < searchBooksList.length; j++) {
+					if(searchBooksList[j].id=== bookShelfList[i].id){
+						booklistFinal[j] = bookShelfList[i]
+					}
+				}*/
+				
+			return searchBooksListFinal
 		}
-		return booklistFinal
-	}
+	
 	
 	render(){
 		const query = this.state.query
@@ -61,6 +70,7 @@ class searchResult extends Component{
 
 		return(
 			<div className="search-books-input-wrapper">
+			{console.log("current",currentBooks)}
                 {/*
                   NOTES: The search from BooksAPI is limited to a particular set of search terms.
                   You can find these search terms here:
@@ -75,7 +85,7 @@ class searchResult extends Component{
                   value = {query}
                   onChange = {(event)=>this.updateQuery(event.target.value, currentBooks)}
                 />
-                <BookDisplay book = {this.state.books} handleChange = {this.props.handleChange}/>
+                <BookDisplay book = {this.matchBookUpdateShelf(currentBooks, this.state.books)} handleChange = {this.props.handleChange}/>
               </div>
 
 

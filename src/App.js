@@ -10,12 +10,6 @@ class BooksApp extends React.Component {
   state = {
       books: [],
       update: false,  
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the imageLinks in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good imageLinks they can bookmark and share.
-     */
   }
 
   componentDidMount(){

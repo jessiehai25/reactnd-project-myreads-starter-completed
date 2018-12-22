@@ -3,9 +3,6 @@ import React, {Component} from 'react'
 
 class bookDisplay extends Component{
 
-	state = {
-		title: "",
-	}
 	render(){
 		return(
 			<ol className="books-grid">
